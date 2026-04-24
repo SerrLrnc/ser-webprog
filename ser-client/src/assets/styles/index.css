@@ -317,3 +317,23 @@ code {
   right: 0;
   border-right-color: var(--border);
 }
+
+pre {
+  margin: 0;
+}
+
+code {
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.prose pre {
+  background: transparent;
+  padding: 0;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}

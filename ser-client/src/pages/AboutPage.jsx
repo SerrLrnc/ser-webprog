@@ -125,7 +125,7 @@ const AboutPage = () => {
                 <div className="h-12 w-12 border-2 border-zinc-300 bg-zinc-100" />
               </div>
             </div>
-            <Button className="mt-5" variant="outline">
+            <Button className="mt-5" variant="secondary">
               View Section
             </Button>
           </div>

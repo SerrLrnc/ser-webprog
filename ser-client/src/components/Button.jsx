@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 const variantClasses = {
     primary: 'bg-zinc-900 text-zinc-50 hover:bg-zinc-700',
     secondary: 'bg-zinc-50 text-zinc-900 hover:bg-zinc-200',
+    outline: 'bg-transparent text-zinc-900 hover:bg-zinc-100 border-2 border-zinc-900', // Add this
 };
 
 const Button = ({
@@ -28,11 +29,10 @@ const Button = ({
         );
     }
 
-
-return (
-    <button type={type} className={classes}>
-        {children}
-    </button>
+    return (
+        <button type={type} className={classes}>
+            {children}
+        </button>
     );
 };
 
