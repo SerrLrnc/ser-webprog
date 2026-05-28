@@ -1,192 +1,267 @@
-import React from 'react';
-import { BarChart, PieChart, LineChart } from '@mui/x-charts';
-import { DataGrid } from '@mui/x-data-grid';
-import { Box, Typography, Card, CardContent, Paper, Stack, Grid } from '@mui/material';
-
-// Real User Data
-const userData = [
-  { id: 1, name: 'John Doe', age: 32, email: 'john@example.com', role: 'Admin', region: 'North' },
-  { id: 2, name: 'Jane Smith', age: 28, email: 'jane@example.com', role: 'Manager', region: 'South' },
-  { id: 3, name: 'Alex Johnson', age: 45, email: 'alex@example.com', role: 'User', region: 'East' },
-  { id: 4, name: 'Emily Davis', age: 35, email: 'emily@example.com', role: 'User', region: 'West' },
-  { id: 5, name: 'Michael Brown', age: 52, email: 'michael@example.com', role: 'Manager', region: 'North' },
-  { id: 6, name: 'Sarah Lee', age: 26, email: 'sarah@example.com', role: 'User', region: 'South' },
-  { id: 7, name: 'David Wilson', age: 41, email: 'david@example.com', role: 'Admin', region: 'East' },
-  { id: 8, name: 'Lisa Anderson', age: 38, email: 'lisa@example.com', role: 'User', region: 'West' },
-  { id: 9, name: 'Robert Taylor', age: 55, email: 'robert@example.com', role: 'User', region: 'North' },
-];
-
-// Age Group Distribution
-const ageGroups = ['18-25', '26-35', '36-45', '46-55', '55+'];
-const ageDistribution = [
-  userData.filter(u => u.age >= 18 && u.age <= 25).length,
-  userData.filter(u => u.age >= 26 && u.age <= 35).length,
-  userData.filter(u => u.age >= 36 && u.age <= 45).length,
-  userData.filter(u => u.age >= 46 && u.age <= 55).length,
-  userData.filter(u => u.age > 55).length,
-];
-
-// Region Distribution
-const regions = ['North', 'South', 'East', 'West'];
-const regionData = regions.map(region => userData.filter(u => u.region === region).length);
-
-// Role Distribution
-const roles = ['Admin', 'Manager', 'User'];
-const roleData = roles.map(role => userData.filter(u => u.role === role).length);
-
-// Table Columns
-const tableColumns = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'name', headerName: 'User Name', width: 180 },
-  { field: 'email', headerName: 'Email', width: 220 },
-  { field: 'age', headerName: 'Age', width: 100, type: 'number' },
-  { field: 'role', headerName: 'Role', width: 120 },
-  { field: 'region', headerName: 'Region', width: 120 },
-];
-
-const totalUsers = userData.length;
-const averageAge = (userData.reduce((sum, u) => sum + u.age, 0) / totalUsers).toFixed(1);
+import React, { useState, useEffect } from 'react';
+import { 
+    Box, 
+    Typography, 
+    Grid, 
+    Card, 
+    CardContent, 
+    Stack, 
+    Paper, 
+    Avatar, 
+    Chip,
+    Button
+} from '@mui/material';
+import PeopleIcon from '@mui/icons-material/People';
+import ArticleIcon from '@mui/icons-material/Article';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import constants from '../../constants';
 
 function DashboardPage() {
-  return (
-    <Box>
-      <Typography variant="h4" gutterBottom fontWeight="bold">
-        Dashboard Overview
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-        Welcome back! Here's what's happening with your users today.
-      </Typography>
+    const [stats, setStats] = useState({
+        totalUsers: 0,
+        totalArticles: 0,
+        totalReports: 0,
+        activeUsers: 0
+    });
+    const [recentUsers, setRecentUsers] = useState([]);
+    const [userRole, setUserRole] = useState('');
 
-      {/* Summary Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: '#667eea', color: 'white' }}>
-            <CardContent>
-              <Typography variant="h6">Total Users</Typography>
-              <Typography variant="h3" fontWeight="bold">{totalUsers}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: '#764ba2', color: 'white' }}>
-            <CardContent>
-              <Typography variant="h6">Average Age</Typography>
-              <Typography variant="h3" fontWeight="bold">{averageAge}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: '#f093fb', color: 'white' }}>
-            <CardContent>
-              <Typography variant="h6">Active Users</Typography>
-              <Typography variant="h3" fontWeight="bold">{totalUsers}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: '#4facfe', color: 'white' }}>
-            <CardContent>
-              <Typography variant="h6">Regions</Typography>
-              <Typography variant="h3" fontWeight="bold">4</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+    useEffect(() => {
+        const role = localStorage.getItem('userType');
+        setUserRole(role);
+        fetchStats();
+        fetchRecentUsers();
+    }, []);
 
-      {/* Charts Section - BIGGER */}
-      <Typography variant="h5" gutterBottom sx={{ mt: 2, mb: 2 }}>
-        Analytics
-      </Typography>
-      
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* Age Distribution Bar Chart */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, height: '100%', minHeight: 400 }}>
-            <Typography variant="h6" gutterBottom>Age Distribution</Typography>
-            <Box sx={{ width: '100%', height: 320 }}>
-              <BarChart
-                series={[{ data: ageDistribution, label: 'Users', color: '#667eea' }]}
-                height={320}
-                width={500}
-                xAxis={[{ data: ageGroups, scaleType: 'band', label: 'Age Groups' }]}
-                yAxis={[{ label: 'Number of Users' }]}
-              />
+    const fetchStats = async () => {
+        try {
+            const usersRes = await fetch(`${constants.HOST}/users`);
+            const users = await usersRes.json();
+            
+            const articlesRes = await fetch(`${constants.HOST}/articles`);
+            const articles = await articlesRes.json();
+            
+            setStats({
+                totalUsers: users.length,
+                totalArticles: articles.length,
+                totalReports: Math.floor(Math.random() * 50) + 20,
+                activeUsers: users.filter(u => u.isActive).length
+            });
+        } catch (error) {
+            console.error('Error fetching stats:', error);
+        }
+    };
+
+    const fetchRecentUsers = async () => {
+        try {
+            const res = await fetch(`${constants.HOST}/users`);
+            const users = await res.json();
+            setRecentUsers(users.slice(-5).reverse());
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    };
+
+    // Admin Dashboard - Full access with all stats
+    if (userRole === 'admin') {
+        return (
+            <Box>
+                <Typography variant="h4" gutterBottom fontWeight="bold">
+                    Admin Dashboard
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+                    Welcome back, Administrator! Here's your system overview.
+                </Typography>
+
+                <Grid container spacing={3} sx={{ mb: 4 }}>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <Card sx={{ bgcolor: '#667eea', color: 'white' }}>
+                            <CardContent>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                    <Box>
+                                        <Typography variant="h6">Total Users</Typography>
+                                        <Typography variant="h3" fontWeight="bold">{stats.totalUsers}</Typography>
+                                    </Box>
+                                    <PeopleIcon sx={{ fontSize: 48, opacity: 0.7 }} />
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <Card sx={{ bgcolor: '#764ba2', color: 'white' }}>
+                            <CardContent>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                    <Box>
+                                        <Typography variant="h6">Total Articles</Typography>
+                                        <Typography variant="h3" fontWeight="bold">{stats.totalArticles}</Typography>
+                                    </Box>
+                                    <ArticleIcon sx={{ fontSize: 48, opacity: 0.7 }} />
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <Card sx={{ bgcolor: '#f093fb', color: 'white' }}>
+                            <CardContent>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                    <Box>
+                                        <Typography variant="h6">Reports</Typography>
+                                        <Typography variant="h3" fontWeight="bold">{stats.totalReports}</Typography>
+                                    </Box>
+                                    <AssessmentIcon sx={{ fontSize: 48, opacity: 0.7 }} />
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <Card sx={{ bgcolor: '#4facfe', color: 'white' }}>
+                            <CardContent>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                    <Box>
+                                        <Typography variant="h6">Active Users</Typography>
+                                        <Typography variant="h3" fontWeight="bold">{stats.activeUsers}</Typography>
+                                    </Box>
+                                    <TrendingUpIcon sx={{ fontSize: 48, opacity: 0.7 }} />
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
+
+                <Typography variant="h5" gutterBottom>Recent Users</Typography>
+                <Paper sx={{ p: 2 }}>
+                    {recentUsers.map((user) => (
+                        <Box key={user._id} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1, borderBottom: '1px solid #e5e7eb' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <Avatar sx={{ bgcolor: '#667eea' }}>{user.firstName?.charAt(0)}</Avatar>
+                                <Box>
+                                    <Typography variant="body1" fontWeight="medium">{user.firstName} {user.lastName}</Typography>
+                                    <Typography variant="caption" color="text.secondary">{user.email}</Typography>
+                                </Box>
+                            </Box>
+                            <Chip label={user.type} size="small" color={user.type === 'admin' ? 'error' : user.type === 'editor' ? 'warning' : 'success'} />
+                        </Box>
+                    ))}
+                </Paper>
             </Box>
-          </Paper>
-        </Grid>
+        );
+    }
 
-        {/* Region Distribution Pie Chart */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, height: '100%', minHeight: 400 }}>
-            <Typography variant="h6" gutterBottom>Users by Region</Typography>
-            <Box sx={{ width: '100%', height: 320, display: 'flex', justifyContent: 'center' }}>
-              <PieChart
-                series={[{
-                  data: regions.map((region, i) => ({ id: i, value: regionData[i], label: region })),
-                  innerRadius: 40,
-                  outerRadius: 120,
-                }]}
-                height={320}
-                width={500}
-              />
+    // Editor Dashboard - Moderate access
+    if (userRole === 'editor') {
+        return (
+            <Box>
+                <Typography variant="h4" gutterBottom fontWeight="bold">
+                    Editor Dashboard
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+                    Welcome back! Manage your content and track performance.
+                </Typography>
+
+                <Grid container spacing={3} sx={{ mb: 4 }}>
+                    <Grid item xs={12} sm={6} md={4}>
+                        <Card sx={{ bgcolor: '#667eea', color: 'white' }}>
+                            <CardContent>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                    <Box>
+                                        <Typography variant="h6">Your Articles</Typography>
+                                        <Typography variant="h3" fontWeight="bold">{stats.totalArticles}</Typography>
+                                    </Box>
+                                    <ArticleIcon sx={{ fontSize: 48, opacity: 0.7 }} />
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                        <Card sx={{ bgcolor: '#f093fb', color: 'white' }}>
+                            <CardContent>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                    <Box>
+                                        <Typography variant="h6">Pending Reviews</Typography>
+                                        <Typography variant="h3" fontWeight="bold">3</Typography>
+                                    </Box>
+                                    <AssessmentIcon sx={{ fontSize: 48, opacity: 0.7 }} />
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                        <Card sx={{ bgcolor: '#4facfe', color: 'white' }}>
+                            <CardContent>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                    <Box>
+                                        <Typography variant="h6">Published</Typography>
+                                        <Typography variant="h3" fontWeight="bold">12</Typography>
+                                    </Box>
+                                    <TrendingUpIcon sx={{ fontSize: 48, opacity: 0.7 }} />
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
+
+                <Paper sx={{ p: 3, textAlign: 'center' }}>
+                    <Typography variant="h6">Quick Actions</Typography>
+                    <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 2 }}>
+                        <Button variant="contained" onClick={() => window.location.href = '/articles'}>Create New Article</Button>
+                        <Button variant="outlined">Review Pending</Button>
+                    </Stack>
+                </Paper>
             </Box>
-          </Paper>
-        </Grid>
-      </Grid>
+        );
+    }
 
-      {/* Role Distribution Bar Chart - BIGGER */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>User Roles Distribution</Typography>
-            <Box sx={{ width: '100%', height: 350 }}>
-              <BarChart
-                series={[{ data: roleData, label: 'Users', color: '#764ba2' }]}
-                height={350}
-                width={800}
-                xAxis={[{ data: roles, scaleType: 'band', label: 'Roles' }]}
-                yAxis={[{ label: 'Number of Users' }]}
-              />
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
+    // Viewer Dashboard - Limited access
+    return (
+        <Box>
+            <Typography variant="h4" gutterBottom fontWeight="bold">
+                Viewer Dashboard
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+                Welcome! Browse and read articles.
+            </Typography>
 
-      {/* Monthly Trend Line Chart - BIGGER */}
-      <Typography variant="h5" gutterBottom sx={{ mt: 2, mb: 2 }}>
-        Monthly Trend
-      </Typography>
-      
-      <Paper sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h6" gutterBottom>User Growth (Last 6 Months)</Typography>
-        <Box sx={{ width: '100%', height: 350 }}>
-          <LineChart
-            series={[{ data: [15, 22, 28, 35, 42, 48], label: 'New Users', color: '#f093fb' }]}
-            height={350}
-            width={800}
-            xAxis={[{ data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], label: 'Month' }]}
-            yAxis={[{ label: 'Number of Users' }]}
-          />
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+                <Grid item xs={12} sm={6}>
+                    <Card sx={{ bgcolor: '#667eea', color: 'white' }}>
+                        <CardContent>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                <Box>
+                                    <Typography variant="h6">Available Articles</Typography>
+                                    <Typography variant="h3" fontWeight="bold">{stats.totalArticles}</Typography>
+                                </Box>
+                                <ArticleIcon sx={{ fontSize: 48, opacity: 0.7 }} />
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <Card sx={{ bgcolor: '#4facfe', color: 'white' }}>
+                        <CardContent>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                <Box>
+                                    <Typography variant="h6">Categories</Typography>
+                                    <Typography variant="h3" fontWeight="bold">5</Typography>
+                                </Box>
+                                <TrendingUpIcon sx={{ fontSize: 48, opacity: 0.7 }} />
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+
+            <Paper sx={{ p: 3, textAlign: 'center' }}>
+                <Typography variant="h6">Start Reading</Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    Click on Articles in the sidebar to browse our collection.
+                </Typography>
+                <Button variant="contained" sx={{ mt: 2 }} onClick={() => window.location.href = '/articles'}>
+                    Browse Articles
+                </Button>
+            </Paper>
         </Box>
-      </Paper>
-
-      {/* Users Table */}
-      <Typography variant="h5" gutterBottom sx={{ mt: 2, mb: 2 }}>
-        Users List
-      </Typography>
-      
-      <Paper sx={{ height: 500, width: '100%' }}>
-        <DataGrid
-          rows={userData}
-          columns={tableColumns}
-          initialState={{ pagination: { paginationModel: { pageSize: 5 } } }}
-          pageSizeOptions={[5, 10]}
-          checkboxSelection
-          disableRowSelectionOnClick
-        />
-      </Paper>
-    </Box>
-  );
+    );
 }
 
 export default DashboardPage;

@@ -1,154 +1,255 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import Button from '../../components/Button';
 
 const SignUpPage = () => {
-  const navigate = useNavigate();
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        age: '',
+        gender: '',
+        contactNumber: '',
+        email: '',
+        username: '',
+        password: '',
+        address: '',
+        type: 'viewer',  // Default role for new users
+        isActive: true
+    });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!email || !email.includes('@')) {
-      setError('Please enter a valid email address');
-      return;
-    }
-    
-    if (!password) {
-      setError('Please enter a password');
-      return;
-    }
-    
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-    
-    if (password.length < 4) {
-      setError('Password must be at least 4 characters');
-      return;
-    }
-    
-    const userData = {
-      fullName,
-      email,
-      password,
-      registeredAt: new Date().toISOString()
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
     };
-    
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('isAuthenticated', 'true');
-    
-    navigate('/auth/signin');
-  };
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-700 to-black px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        // Validation
+        if (formData.password.length < 8) {
+            setError('Password must be at least 8 characters');
+            setLoading(false);
+            return;
+        }
+
+        if (!/^\d{11}$/.test(formData.contactNumber)) {
+            setError('Contact number must be exactly 11 digits');
+            setLoading(false);
+            return;
+        }
+
+        if (formData.username.includes(' ')) {
+            setError('Username must not contain spaces');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Auto login after signup
+                const loginResponse = await fetch('http://localhost:5000/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: formData.email,
+                        password: formData.password
+                    }),
+                });
+
+                const loginData = await loginResponse.json();
+
+                if (loginResponse.ok) {
+                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('token', loginData.token);
+                    localStorage.setItem('userType', loginData.type);
+                    localStorage.setItem('userName', loginData.firstName);
+                    
+                    // Redirect based on role
+                    if (loginData.type === 'viewer') {
+                        navigate('/articles');
+                    } else {
+                        navigate('/');
+                    }
+                } else {
+                    navigate('/auth/signin');
+                }
+            } else {
+                setError(data.message || 'Registration failed');
+            }
+        } catch (err) {
+            console.error('Signup error:', err);
+            setError('Network error. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
         <div className="rounded-2xl border border-white/20 bg-white p-8 shadow-2xl sm:p-10">
-          
-          {/* Header */}
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-zinc-900 sm:text-4xl">Create an account</h1>
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-              {error}
-            </div>
-          )}
-
-          {/* Google Sign Up Button */}
-          <button className="mb-6 flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-200 bg-white py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50">
-            <svg className="h-5 w-5" viewBox="0 0 24 24">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-            </svg>
-            Create account with Google
-          </button>
-
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-zinc-200"></div>
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-white px-3 text-zinc-400">Or</span>
-            </div>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-zinc-700">Email Address</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email address"
-                className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-red-400 focus:bg-white focus:ring-1 focus:ring-red-400"
-                required
-              />
+            <div className="mb-8 text-center">
+                <h1 className="text-3xl font-bold text-zinc-900 sm:text-4xl">Create an account</h1>
+                <p className="mt-2 text-sm text-zinc-500">Join us today!</p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-zinc-700">Full Name</label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Enter your full name"
-                className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-red-400 focus:bg-white focus:ring-1 focus:ring-red-400"
-              />
-            </div>
+            {error && (
+                <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                    {error}
+                </div>
+            )}
 
-            <div>
-              <label className="block text-sm font-medium text-zinc-700">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Create your password"
-                className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-red-400 focus:bg-white focus:ring-1 focus:ring-red-400"
-                required
-              />
-            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-700">First Name</label>
+                        <input
+                            type="text"
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleChange}
+                            required
+                            className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none focus:border-red-400"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-700">Last Name</label>
+                        <input
+                            type="text"
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            required
+                            className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none focus:border-red-400"
+                        />
+                    </div>
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-zinc-700">Confirm Password</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your password"
-                className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-red-400 focus:bg-white focus:ring-1 focus:ring-red-400"
-                required
-              />
-            </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-700">Age</label>
+                        <input
+                            type="number"
+                            name="age"
+                            value={formData.age}
+                            onChange={handleChange}
+                            required
+                            className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none focus:border-red-400"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-700">Gender</label>
+                        <select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            required
+                            className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none focus:border-red-400"
+                        >
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                </div>
 
-            <Button type="submit" variant="primary" className="w-full bg-red-500 py-3 text-sm font-semibold text-white hover:bg-red-600">
-              Create Account
-            </Button>
-          </form>
+                <div>
+                    <label className="block text-sm font-medium text-zinc-700">Email Address</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none focus:border-red-400"
+                    />
+                </div>
 
-          {/* Sign In Link */}
-          <p className="mt-6 text-center text-sm text-zinc-500">
-            Already have an account?{' '}
-            <Link to="/auth/signin" className="font-semibold text-red-500 hover:text-red-600">
-              Login
-            </Link>
-          </p>
+                <div>
+                    <label className="block text-sm font-medium text-zinc-700">Username</label>
+                    <input
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleChange}
+                        required
+                        className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none focus:border-red-400"
+                    />
+                    <p className="mt-1 text-xs text-zinc-400">No spaces allowed</p>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-zinc-700">Contact Number</label>
+                    <input
+                        type="tel"
+                        name="contactNumber"
+                        value={formData.contactNumber}
+                        onChange={handleChange}
+                        required
+                        placeholder="09123456789"
+                        className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none focus:border-red-400"
+                    />
+                    <p className="mt-1 text-xs text-zinc-400">Must be exactly 11 digits</p>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-zinc-700">Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none focus:border-red-400"
+                    />
+                    <p className="mt-1 text-xs text-zinc-400">At least 8 characters</p>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-zinc-700">Address</label>
+                    <textarea
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        required
+                        rows="2"
+                        className="mt-1 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none focus:border-red-400"
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full rounded-lg bg-red-500 py-3 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-50"
+                >
+                    {loading ? 'Creating Account...' : 'Create Account'}
+                </button>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-zinc-500">
+                Already have an account?{' '}
+                <Link to="/auth/signin" className="font-semibold text-red-500 hover:text-red-600">
+                    Sign In
+                </Link>
+            </p>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default SignUpPage;

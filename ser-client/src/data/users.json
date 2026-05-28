@@ -1,0 +1,80 @@
+[
+  {
+    "firstName": "James",
+    "lastName": "Wilson",
+    "age": "34",
+    "gender": "male",
+    "contactNumber": "09171234567",
+    "email": "james.wilson@ser.dev",
+    "role": "admin",
+    "username": "jameswilson",
+    "password": "James123!",
+    "address": "Makati City, Metro Manila",
+    "isActive": true
+  },
+  {
+    "firstName": "Maria",
+    "lastName": "Garcia",
+    "age": "28",
+    "gender": "female",
+    "contactNumber": "09182345678",
+    "email": "maria.garcia@ser.dev",
+    "role": "viewer",
+    "username": "mariagarcia",
+    "password": "Maria123!",
+    "address": "Quezon City, Metro Manila",
+    "isActive": true
+  },
+  {
+    "firstName": "Christopher",
+    "lastName": "Lee",
+    "age": "42",
+    "gender": "male",
+    "contactNumber": "09193456789",
+    "email": "christopher.lee@ser.dev",
+    "role": "editor",
+    "username": "christopherlee",
+    "password": "Chris123!",
+    "address": "Taguig City, Metro Manila",
+    "isActive": false
+  },
+  {
+    "firstName": "Jennifer",
+    "lastName": "Martinez",
+    "age": "31",
+    "gender": "female",
+    "contactNumber": "09214567890",
+    "email": "jennifer.martinez@ser.dev",
+    "role": "viewer",
+    "username": "jennifermartinez",
+    "password": "Jen123!",
+    "address": "Pasig City, Metro Manila",
+    "isActive": true
+  },
+  {
+    "firstName": "David",
+    "lastName": "Brown",
+    "age": "37",
+    "gender": "male",
+    "contactNumber": "09225678901",
+    "email": "david.brown@ser.dev",
+    "role": "editor",
+    "username": "davidbrown",
+    "password": "David123!",
+    "address": "Mandaluyong City, Metro Manila",
+    "isActive": false
+  },
+  {
+    "firstName": "Sarah",
+    "lastName": "Rodriguez",
+    "age": "26",
+    "gender": "female",
+    "contactNumber": "09236789012",
+    "email": "sarah.rodriguez@ser.dev",
+    "role": "viewer",
+    "username": "sarahrodriguez",
+    "password": "Sarah123!",
+    "address": "Paranaque City, Metro Manila",
+    "isActive": true
+  }
+]
