@@ -37,10 +37,8 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
 // GET /api/users
-export default function handler(req, res) {
-    res.status(200).json({ message: 'API is working!' });
-}
-
+export default async function handler(req, res) {
+    await connectDB();
 
     if (req.method === 'GET') {
         try {
