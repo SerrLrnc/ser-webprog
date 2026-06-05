@@ -13,15 +13,15 @@ import {
     Chip,
     IconButton,
     Alert,
+    alpha,
     Grid,
     Card,
-    CardContent,
+    CardContent
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ArticleIcon from '@mui/icons-material/Article';
 import constants from '../../constants';
 
 function ArticlesPage() {
@@ -136,8 +136,8 @@ function ArticlesPage() {
     };
 
     const columns = [
-        { field: 'title', headerName: 'Title', width: 280 },
-        { field: 'slug', headerName: 'Slug', width: 220 },
+        { field: 'title', headerName: 'Title', width: 300 },
+        { field: 'slug', headerName: 'Slug', width: 250 },
         { field: 'paragraph', headerName: 'Paragraphs', width: 110 },
         { 
             field: 'status', 
@@ -180,31 +180,35 @@ function ArticlesPage() {
         content: article.content
     }));
 
+    const publishedCount = articles.filter(a => a.status === 'published').length;
+    const draftCount = articles.filter(a => a.status === 'draft').length;
+    const archivedCount = articles.filter(a => a.status === 'archived').length;
+
     return (
-        <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+        <Box>
             {/* Stats Cards */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
                 <Grid item xs={12} sm={6} md={4}>
-                    <Card sx={{ bgcolor: '#667eea', color: 'white' }}>
+                    <Card sx={{ bgcolor: '#667eea', color: 'white', borderRadius: 4 }}>
                         <CardContent>
-                            <Typography variant="h6">Total Articles</Typography>
+                            <Typography variant="body2" sx={{ opacity: 0.8 }}>Total Articles</Typography>
                             <Typography variant="h3" fontWeight="bold">{articles.length}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                    <Card sx={{ bgcolor: '#10b981', color: 'white' }}>
+                    <Card sx={{ bgcolor: '#10b981', color: 'white', borderRadius: 4 }}>
                         <CardContent>
-                            <Typography variant="h6">Published</Typography>
-                            <Typography variant="h3" fontWeight="bold">{articles.filter(a => a.status === 'published').length}</Typography>
+                            <Typography variant="body2" sx={{ opacity: 0.8 }}>Published</Typography>
+                            <Typography variant="h3" fontWeight="bold">{publishedCount}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                    <Card sx={{ bgcolor: '#f59e0b', color: 'white' }}>
+                    <Card sx={{ bgcolor: '#f59e0b', color: 'white', borderRadius: 4 }}>
                         <CardContent>
-                            <Typography variant="h6">Drafts</Typography>
-                            <Typography variant="h3" fontWeight="bold">{articles.filter(a => a.status === 'draft').length}</Typography>
+                            <Typography variant="body2" sx={{ opacity: 0.8 }}>Drafts</Typography>
+                            <Typography variant="h3" fontWeight="bold">{draftCount}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -212,32 +216,19 @@ function ArticlesPage() {
 
             {/* Header */}
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-                <Typography variant="h4" fontWeight="bold">
-                    Articles
+                <Typography variant="h4" fontWeight="700" sx={{ letterSpacing: '-0.02em' }}>
+                    Article Management
                 </Typography>
-                <Button 
-                    variant="contained" 
-                    startIcon={<AddIcon />} 
-                    onClick={() => handleOpenDialog()}
-                    sx={{ py: 1, px: 3 }}
-                >
+                <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpenDialog()} sx={{ borderRadius: 2 }}>
                     New Article
                 </Button>
             </Stack>
 
-            {error && (
-                <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
-                    {error}
-                </Alert>
-            )}
+            {error && <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }} onClose={() => setError('')}>{error}</Alert>}
+            {success && <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }} onClose={() => setSuccess('')}>{success}</Alert>}
 
-            {success && (
-                <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess('')}>
-                    {success}
-                </Alert>
-            )}
-
-            <Paper sx={{ height: 500, width: '100%', overflow: 'hidden' }}>
+            {/* Articles Table */}
+            <Paper sx={{ p: 2, borderRadius: 4, overflow: 'hidden' }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}
@@ -246,14 +237,15 @@ function ArticlesPage() {
                     pageSizeOptions={[5, 10, 25]}
                     initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
                     disableRowSelectionOnClick
+                    sx={{ border: 'none' }}
                 />
             </Paper>
 
             {/* Add/Edit Dialog */}
             <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-                <DialogTitle sx={{ bgcolor: '#f5f5f5', py: 2 }}>
-                    <Typography variant="h6">
-                        {editingArticle ? '✏️ Edit Article' : '📝 Create New Article'}
+                <DialogTitle sx={{ bgcolor: alpha('#e02424', 0.05), borderBottom: '1px solid #e5e7eb' }}>
+                    <Typography variant="h6" fontWeight="600">
+                        {editingArticle ? 'Edit Article' : 'Create New Article'}
                     </Typography>
                 </DialogTitle>
                 <DialogContent sx={{ mt: 2 }}>
@@ -283,7 +275,7 @@ function ArticlesPage() {
                             <option value="archived">📦 Archived</option>
                         </TextField>
                         
-                        <Typography variant="h6">📖 Content</Typography>
+                        <Typography variant="subtitle1" fontWeight="600">Content</Typography>
                         {formData.content.map((paragraph, index) => (
                             <TextField
                                 key={index}
@@ -302,13 +294,13 @@ function ArticlesPage() {
                         <Button 
                             variant="outlined" 
                             onClick={() => setFormData({ ...formData, content: [...formData.content, ''] })}
-                            sx={{ alignSelf: 'flex-start' }}
+                            sx={{ alignSelf: 'flex-start', borderRadius: 2 }}
                         >
                             + Add Paragraph
                         </Button>
                     </Stack>
                 </DialogContent>
-                <DialogActions sx={{ p: 2.5, bgcolor: '#f5f5f5' }}>
+                <DialogActions sx={{ p: 2.5, borderTop: '1px solid #e5e7eb' }}>
                     <Button onClick={handleCloseDialog} variant="outlined">Cancel</Button>
                     <Button onClick={handleSubmit} variant="contained">
                         {editingArticle ? 'Update Article' : 'Create Article'}

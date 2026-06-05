@@ -1,48 +1,26 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const bodyParser = require("body-parser");
-const jsonParser = bodyParser.json();
-const connectDB = require("./config/db");
-const userRoutes = require("./routes/userRoutes");
-const articleRoutes = require("./routes/articleRoutes");
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const userRoutes = require('../routes/userRoutes');
+const articleRoutes = require('../routes/articleRoutes');
+require('dotenv').config();
 
 const app = express();
 
-// Database Connection
-connectDB();
-
+app.use(cors());
 app.use(express.json());
 
-// Middleware
-app.use(jsonParser);
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
-
-// Curb CORS Error by adding a header here
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );
-  next();
-});
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URL)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log('MongoDB error:', err));
 
 // Routes
-app.use("/api/users", userRoutes);
-app.use("/api/articles", articleRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/articles', articleRoutes);
 
-// Error Handling
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Server Error" });
+app.get('/api', (req, res) => {
+  res.json({ message: 'API is running!' });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+module.exports = app;

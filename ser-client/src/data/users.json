@@ -13,16 +13,16 @@
     "isActive": true
   },
   {
-    "firstName": "Maria",
-    "lastName": "Garcia",
-    "age": "28",
-    "gender": "female",
-    "contactNumber": "09182345678",
-    "email": "maria.garcia@ser.dev",
-    "role": "viewer",
-    "username": "mariagarcia",
-    "password": "Maria123!",
-    "address": "Quezon City, Metro Manila",
+    "firstName": "Admin",
+    "lastName": "User",
+    "age": "30",
+    "gender": "male",
+    "contactNumber": "09171234568",
+    "email": "admin@lab.dev",
+    "username": "adminuser",
+    "password": "admin123",
+    "address": "Admin Office",
+    "role": "admin",
     "isActive": true
   },
   {
@@ -37,19 +37,6 @@
     "password": "Chris123!",
     "address": "Taguig City, Metro Manila",
     "isActive": false
-  },
-  {
-    "firstName": "Jennifer",
-    "lastName": "Martinez",
-    "age": "31",
-    "gender": "female",
-    "contactNumber": "09214567890",
-    "email": "jennifer.martinez@ser.dev",
-    "role": "viewer",
-    "username": "jennifermartinez",
-    "password": "Jen123!",
-    "address": "Pasig City, Metro Manila",
-    "isActive": true
   },
   {
     "firstName": "David",
@@ -71,10 +58,75 @@
     "gender": "female",
     "contactNumber": "09236789012",
     "email": "sarah.rodriguez@ser.dev",
-    "role": "viewer",
+    "role": "editor",
     "username": "sarahrodriguez",
     "password": "Sarah123!",
     "address": "Paranaque City, Metro Manila",
+    "isActive": true
+  },
+  {
+    "firstName": "Cyrus",
+    "lastName": "Robles",
+    "age": "24",
+    "gender": "male",
+    "contactNumber": "09171234570",
+    "email": "cyrus.robles@ser.dev",
+    "role": "viewer",
+    "username": "cyrusrobles",
+    "password": "viewer123",
+    "address": "Manila",
+    "isActive": true
+  },
+  {
+    "firstName": "Maria",
+    "lastName": "Garcia",
+    "age": "28",
+    "gender": "female",
+    "contactNumber": "09182345678",
+    "email": "maria.garcia@ser.dev",
+    "role": "viewer",
+    "username": "mariagarcia",
+    "password": "Maria123!",
+    "address": "Quezon City, Metro Manila",
+    "isActive": true
+  },
+  {
+    "firstName": "Jennifer",
+    "lastName": "Martinez",
+    "age": "31",
+    "gender": "female",
+    "contactNumber": "09214567890",
+    "email": "jennifer.martinez@ser.dev",
+    "role": "viewer",
+    "username": "jennifermartinez",
+    "password": "Jen123!",
+    "address": "Pasig City, Metro Manila",
+    "isActive": true
+  },
+  {
+    "firstName": "Anna",
+    "lastName": "Santos",
+    "age": "22",
+    "gender": "female",
+    "contactNumber": "09171234571",
+    "email": "anna.santos@ser.dev",
+    "role": "viewer",
+    "username": "annasantos",
+    "password": "viewer123",
+    "address": "Quezon City",
+    "isActive": true
+  },
+  {
+    "firstName": "Mark",
+    "lastName": "Reyes",
+    "age": "27",
+    "gender": "male",
+    "contactNumber": "09171234572",
+    "email": "mark.reyes@ser.dev",
+    "role": "viewer",
+    "username": "markreyes",
+    "password": "viewer123",
+    "address": "Makati",
     "isActive": true
   }
 ]

@@ -18,15 +18,10 @@ import {
     Menu,
     MenuItem,
     Chip,
-    Stack,
-    Paper,
-    Grid,
-    Card,
-    CardContent,
-    Tooltip,
-    useMediaQuery,
-    useTheme as useMuiTheme
+    useTheme,
+    alpha
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -34,17 +29,46 @@ import PeopleIcon from '@mui/icons-material/People';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import ArticleIcon from '@mui/icons-material/Article';
 import LogoutIcon from '@mui/icons-material/Logout';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
-// Menu items with role requirements
-const allMenuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/', roles: ['admin', 'editor', 'viewer'] },
-    { text: 'Articles', icon: <ArticleIcon />, path: '/articles', roles: ['admin', 'editor', 'viewer'] },
-    { text: 'Reports', icon: <AssessmentIcon />, path: '/reports', roles: ['admin', 'editor'] },
-    { text: 'Users', icon: <PeopleIcon />, path: '/users', roles: ['admin'] },
+const menuItems = [
+    { text: 'Dashboard', icon: <SpaceDashboardIcon />, path: '/dashboard' },
+    { text: 'Articles', icon: <ArticleIcon />, path: '/dashboard/articles' },
+    { text: 'Reports', icon: <AssessmentIcon />, path: '/dashboard/reports' },
+    { text: 'Users', icon: <PeopleIcon />, path: '/dashboard/users' },
 ];
+
+// Styled AppBar
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+    backgroundColor: '#1a1a2e',
+    backgroundImage: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+    borderBottom: '1px solid rgba(255,255,255,0.05)',
+}));
+
+// Styled Drawer
+const StyledDrawer = styled(Drawer)(({ theme, open }) => ({
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    boxSizing: 'border-box',
+    '& .MuiDrawer-paper': {
+        width: drawerWidth,
+        backgroundColor: '#1a1a2e',
+        backgroundImage: 'linear-gradient(180deg, #1a1a2e 0%, #0f3460 100%)',
+        borderRight: '1px solid rgba(255,255,255,0.05)',
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+        ...(!open && {
+            width: theme.spacing(8),
+            overflowX: 'hidden',
+        }),
+    },
+}));
 
 function DashLayout() {
     const [open, setOpen] = useState(true);
@@ -53,38 +77,19 @@ function DashLayout() {
     const [anchorEl, setAnchorEl] = useState(null);
     const location = useLocation();
     const navigate = useNavigate();
+    const theme = useTheme();
 
     useEffect(() => {
-        // Get user data from localStorage
         const role = localStorage.getItem('userType');
         const name = localStorage.getItem('userName');
-        
-        console.log('Loaded role:', role); // Debug log
         
         if (role) {
             setUserRole(role);
             setUserName(name || 'User');
         } else {
-            // Redirect to login if no role found
-            navigate('/auth/signin');
+            window.location.href = '/auth/signin';
         }
-        
-        // Check if user has access to current page
-        const currentPath = location.pathname;
-        const menuItem = allMenuItems.find(item => item.path === currentPath);
-        
-        if (menuItem && role && !menuItem.roles.includes(role)) {
-            navigate('/');
-        }
-    }, [location.pathname, navigate]);
-
-    // Filter menu items based on user role
-    const getMenuItems = () => {
-        if (!userRole) return [];
-        return allMenuItems.filter(item => 
-            item.roles.includes(userRole)
-        );
-    };
+    }, []);
 
     const handleDrawerToggle = () => {
         setOpen(!open);
@@ -99,19 +104,15 @@ function DashLayout() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('user');
-        localStorage.removeItem('userType');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('token');
-        navigate('/auth/signin');
+        localStorage.clear();
+        window.location.href = '/auth/signin';
     };
 
     const getRoleColor = () => {
         switch(userRole) {
-            case 'admin': return '#ef4444';
-            case 'editor': return '#f59e0b';
-            case 'viewer': return '#10b981';
+            case 'admin': return '#9b1c1c';
+            case 'editor': return '#c81e1e';
+            case 'viewer': return '#e02424';
             default: return '#6b7280';
         }
     };
@@ -125,49 +126,52 @@ function DashLayout() {
         }
     };
 
-    const menuItems = getMenuItems();
+    const getFilteredMenuItems = () => {
+        if (userRole === 'admin') return menuItems;
+        if (userRole === 'editor') return menuItems.filter(item => item.text !== 'Users');
+        return menuItems.filter(item => item.text === 'Dashboard' || item.text === 'Articles');
+    };
+
+    const filteredMenuItems = getFilteredMenuItems();
 
     return (
-        <Box sx={{ display: 'flex' }}>
-            <AppBar position="fixed" sx={{ zIndex: 1201, bgcolor: '#1a1a2e' }}>
+        <Box sx={{ display: 'flex', bgcolor: '#f5f7fa', minHeight: '100vh' }}>
+            <StyledAppBar position="fixed" open={open}>
                 <Toolbar>
-                    <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 2 }}>
+                    <IconButton
+                        color="inherit"
+                        onClick={handleDrawerToggle}
+                        edge="start"
+                        sx={{ mr: 2 }}
+                    >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-                        Wireframe Studio
+                    <Typography variant="h6" noWrap sx={{ flexGrow: 1, fontWeight: 600, letterSpacing: '-0.5px' }}>
+                        Yoyetz Dashboard
                     </Typography>
                     
-                    {/* User Profile Section */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <Chip
                             label={getRoleLabel()}
                             size="small"
                             sx={{ 
-                                bgcolor: getRoleColor(),
-                                color: 'white',
-                                fontWeight: 'bold',
+                                bgcolor: alpha(getRoleColor(), 0.9), 
+                                color: 'white', 
+                                fontWeight: 600,
                                 textTransform: 'uppercase',
-                                fontSize: '10px'
+                                fontSize: '11px',
+                                letterSpacing: '0.5px'
                             }}
                         />
-                        <Button 
-                            color="inherit" 
-                            onClick={handleMenuOpen}
-                            sx={{ textTransform: 'none' }}
-                        >
+                        <Button color="inherit" onClick={handleMenuOpen} sx={{ textTransform: 'none' }}>
                             <Avatar sx={{ width: 32, height: 32, bgcolor: getRoleColor(), mr: 1 }}>
                                 {userName?.charAt(0) || 'U'}
                             </Avatar>
-                            <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
+                            <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' }, fontWeight: 500 }}>
                                 {userName}
                             </Typography>
                         </Button>
-                        <Menu
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={handleMenuClose}
-                        >
+                        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
                             <MenuItem onClick={handleLogout}>
                                 <LogoutIcon fontSize="small" sx={{ mr: 1 }} />
                                 Logout
@@ -175,51 +179,70 @@ function DashLayout() {
                         </Menu>
                     </Box>
                 </Toolbar>
-            </AppBar>
+            </StyledAppBar>
             
-            <Drawer
-                variant="permanent"
-                open={open}
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
-                        width: drawerWidth,
-                        boxSizing: 'border-box',
-                        ...(!open && { width: 65 }),
-                    },
-                }}
-            >
+            <StyledDrawer variant="permanent" open={open}>
                 <Toolbar />
-                <Divider />
-                <List>
-                    {menuItems.map((item) => (
-                        <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton
-                                component={Link}
-                                to={item.path}
-                                selected={location.pathname === item.path}
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
-                                }}
-                            >
-                                <ListItemIcon
+                <Box sx={{ mt: 2 }}>
+                    <List>
+                        {filteredMenuItems.map((item) => (
+                            <ListItem key={item.text} disablePadding sx={{ display: 'block', mb: 0.5 }}>
+                                <ListItemButton
+                                    component={Link}
+                                    to={item.path}
+                                    selected={location.pathname === item.path}
                                     sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : 'auto',
-                                        justifyContent: 'center',
+                                        minHeight: 48,
+                                        justifyContent: open ? 'initial' : 'center',
+                                        px: 2.5,
+                                        mx: 1,
+                                        borderRadius: 2,
+                                        '&.Mui-selected': {
+                                            backgroundColor: alpha('#e02424', 0.15),
+                                            '&:hover': {
+                                                backgroundColor: alpha('#e02424', 0.25),
+                                            },
+                                            '& .MuiListItemIcon-root': {
+                                                color: '#e02424',
+                                            },
+                                            '& .MuiListItemText-primary': {
+                                                color: 'white',
+                                                fontWeight: 600,
+                                            },
+                                        },
+                                        '&:hover': {
+                                            backgroundColor: alpha('#ffffff', 0.08),
+                                        },
                                     }}
                                 >
-                                    {item.icon}
-                                </ListItemIcon>
-                                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
-                <Divider />
+                                    <ListItemIcon
+                                        sx={{
+                                            minWidth: 0,
+                                            mr: open ? 3 : 'auto',
+                                            justifyContent: 'center',
+                                            color: location.pathname === item.path ? '#e02424' : '#a0aec0',
+                                        }}
+                                    >
+                                        {item.icon}
+                                    </ListItemIcon>
+                                    <ListItemText 
+                                        primary={item.text} 
+                                        sx={{ 
+                                            opacity: open ? 1 : 0,
+                                            '& .MuiListItemText-primary': {
+                                                fontWeight: 500,
+                                                fontSize: '14px',
+                                                letterSpacing: '-0.3px',
+                                                 color: '#e2e8f0',
+                                            }
+                                        }} 
+                                    />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Box>
+                <Divider sx={{ bgcolor: 'rgba(255,255,255,0.08)', my: 2 }} />
                 <List>
                     <ListItem disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
@@ -228,6 +251,11 @@ function DashLayout() {
                                 minHeight: 48,
                                 justifyContent: open ? 'initial' : 'center',
                                 px: 2.5,
+                                mx: 1,
+                                borderRadius: 2,
+                                '&:hover': {
+                                    backgroundColor: alpha('#e02424', 0.15),
+                                },
                             }}
                         >
                             <ListItemIcon
@@ -235,6 +263,7 @@ function DashLayout() {
                                     minWidth: 0,
                                     mr: open ? 3 : 'auto',
                                     justifyContent: 'center',
+                                    color: '#a0aec0',
                                 }}
                             >
                                 <LogoutIcon />
@@ -243,14 +272,13 @@ function DashLayout() {
                         </ListItemButton>
                     </ListItem>
                 </List>
-            </Drawer>
+            </StyledDrawer>
             
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Toolbar />
+            <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
                 <Outlet />
             </Box>
         </Box>
     );
 }
 
-export default DashLayout;  
+export default DashLayout;

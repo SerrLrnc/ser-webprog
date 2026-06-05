@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Box,
     Typography,
@@ -15,13 +15,16 @@ import {
     Alert,
     Avatar,
     MenuItem,
-    FormControlLabel,
-    Switch,
+    FormControl,
+    InputLabel,
+    Select,
     InputAdornment,
     IconButton as MuiIconButton,
     Grid,
     Card,
     CardContent,
+    alpha,
+    useTheme
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
@@ -29,10 +32,29 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import SearchIcon from '@mui/icons-material/Search';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import constants from '../../constants';
 
+const roles = ['admin', 'editor', 'viewer'];
+const genders = ['male', 'female'];
+
+const blankForm = {
+    firstName: '',
+    lastName: '',
+    age: '',
+    gender: '',
+    contactNumber: '',
+    email: '',
+    role: 'viewer',
+    username: '',
+    password: '',
+    address: '',
+    isActive: true,
+};
+
 function UsersPage() {
+    const theme = useTheme();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [openDialog, setOpenDialog] = useState(false);
@@ -40,19 +62,13 @@ function UsersPage() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        age: '',
-        gender: '',
-        contactNumber: '',
-        email: '',
-        username: '',
-        password: '',
-        address: '',
-        type: 'viewer',
-        isActive: true
-    });
+    
+    // Search and Filter States
+    const [searchTerm, setSearchTerm] = useState('');
+    const [roleFilter, setRoleFilter] = useState('all');
+    const [statusFilter, setStatusFilter] = useState('all');
+    
+    const [formData, setFormData] = useState({ ...blankForm });
 
     useEffect(() => {
         fetchUsers();
@@ -71,6 +87,31 @@ function UsersPage() {
         }
     };
 
+    const filteredUsers = useMemo(() => {
+        let filtered = [...users];
+        
+        if (searchTerm) {
+            const term = searchTerm.toLowerCase();
+            filtered = filtered.filter(user => 
+                user.firstName.toLowerCase().includes(term) ||
+                user.lastName.toLowerCase().includes(term) ||
+                user.email.toLowerCase().includes(term) ||
+                user.username.toLowerCase().includes(term)
+            );
+        }
+        
+        if (roleFilter !== 'all') {
+            filtered = filtered.filter(user => user.type === roleFilter);
+        }
+        
+        if (statusFilter !== 'all') {
+            const isActive = statusFilter === 'active';
+            filtered = filtered.filter(user => user.isActive === isActive);
+        }
+        
+        return filtered;
+    }, [users, searchTerm, roleFilter, statusFilter]);
+
     const handleOpenDialog = (user = null) => {
         if (user) {
             setEditingUser(user);
@@ -84,24 +125,12 @@ function UsersPage() {
                 username: user.username,
                 password: '',
                 address: user.address,
-                type: user.type,
+                role: user.type,
                 isActive: user.isActive
             });
         } else {
             setEditingUser(null);
-            setFormData({
-                firstName: '',
-                lastName: '',
-                age: '',
-                gender: '',
-                contactNumber: '',
-                email: '',
-                username: '',
-                password: '',
-                address: '',
-                type: 'viewer',
-                isActive: true
-            });
+            setFormData({ ...blankForm });
         }
         setError('');
         setOpenDialog(true);
@@ -111,19 +140,7 @@ function UsersPage() {
         setOpenDialog(false);
         setEditingUser(null);
         setShowPassword(false);
-        setFormData({
-            firstName: '',
-            lastName: '',
-            age: '',
-            gender: '',
-            contactNumber: '',
-            email: '',
-            username: '',
-            password: '',
-            address: '',
-            type: 'viewer',
-            isActive: true
-        });
+        setFormData({ ...blankForm });
     };
 
     const validateForm = () => {
@@ -157,7 +174,7 @@ function UsersPage() {
                 : `${constants.HOST}/users`;
             const method = editingUser ? 'PUT' : 'POST';
             
-            const payload = { ...formData };
+            const payload = { ...formData, type: formData.role };
             if (!payload.password) delete payload.password;
             
             const response = await fetch(url, {
@@ -223,14 +240,14 @@ function UsersPage() {
 
     const getRoleColor = (role) => {
         switch(role) {
-            case 'admin': return '#ef4444';
-            case 'editor': return '#f59e0b';
-            default: return '#10b981';
+            case 'admin': return '#e02424';
+            case 'editor': return '#f093fb';
+            default: return '#4facfe';
         }
     };
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 80 },
+        { field: 'id', headerName: 'ID', width: 70 },
         { 
             field: 'user', 
             headerName: 'User', 
@@ -241,7 +258,7 @@ function UsersPage() {
                         {params.row.firstName?.charAt(0)}
                     </Avatar>
                     <Box>
-                        <Typography variant="body2" fontWeight="bold">
+                        <Typography variant="body2" fontWeight="600">
                             {params.row.firstName} {params.row.lastName}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -261,7 +278,7 @@ function UsersPage() {
                 <Chip 
                     label={params.value.toUpperCase()} 
                     size="small"
-                    sx={{ bgcolor: getRoleColor(params.value), color: 'white', fontWeight: 'bold', px: 1 }}
+                    sx={{ bgcolor: alpha(getRoleColor(params.value), 0.1), color: getRoleColor(params.value), fontWeight: 600 }}
                 />
             )
         },
@@ -282,7 +299,7 @@ function UsersPage() {
             headerName: 'Actions',
             width: 200,
             renderCell: (params) => (
-                <Stack direction="row" spacing={1.5}>
+                <Stack direction="row" spacing={1}>
                     <IconButton size="small" onClick={() => handleOpenDialog(params.row)} title="Edit User" sx={{ color: '#1976d2' }}>
                         <EditIcon fontSize="small" />
                     </IconButton>
@@ -302,7 +319,7 @@ function UsersPage() {
         }
     ];
 
-    const rows = users.map(user => ({
+    const rows = filteredUsers.map(user => ({
         id: user._id,
         _id: user._id,
         firstName: user.firstName,
@@ -312,49 +329,45 @@ function UsersPage() {
         age: user.age,
         type: user.type,
         isActive: user.isActive,
-        gender: user.gender,
-        contactNumber: user.contactNumber,
-        address: user.address
     }));
 
-    // Count stats
     const adminCount = users.filter(u => u.type === 'admin').length;
     const editorCount = users.filter(u => u.type === 'editor').length;
     const viewerCount = users.filter(u => u.type === 'viewer').length;
     const activeCount = users.filter(u => u.isActive).length;
 
     return (
-        <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+        <Box>
             {/* Stats Cards */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
                 <Grid item xs={12} sm={6} md={3}>
-                    <Card sx={{ bgcolor: '#667eea', color: 'white' }}>
+                    <Card sx={{ bgcolor: '#667eea', color: 'white', borderRadius: 4 }}>
                         <CardContent>
-                            <Typography variant="h6">Total Users</Typography>
+                            <Typography variant="body2" sx={{ opacity: 0.8 }}>Total Users</Typography>
                             <Typography variant="h3" fontWeight="bold">{users.length}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
-                    <Card sx={{ bgcolor: '#ef4444', color: 'white' }}>
+                    <Card sx={{ bgcolor: '#e02424', color: 'white', borderRadius: 4 }}>
                         <CardContent>
-                            <Typography variant="h6">Admins</Typography>
+                            <Typography variant="body2" sx={{ opacity: 0.8 }}>Admins</Typography>
                             <Typography variant="h3" fontWeight="bold">{adminCount}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
-                    <Card sx={{ bgcolor: '#f59e0b', color: 'white' }}>
+                    <Card sx={{ bgcolor: '#f093fb', color: 'white', borderRadius: 4 }}>
                         <CardContent>
-                            <Typography variant="h6">Editors</Typography>
+                            <Typography variant="body2" sx={{ opacity: 0.8 }}>Editors</Typography>
                             <Typography variant="h3" fontWeight="bold">{editorCount}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
-                    <Card sx={{ bgcolor: '#10b981', color: 'white' }}>
+                    <Card sx={{ bgcolor: '#4facfe', color: 'white', borderRadius: 4 }}>
                         <CardContent>
-                            <Typography variant="h6">Active Users</Typography>
+                            <Typography variant="body2" sx={{ opacity: 0.8 }}>Active Users</Typography>
                             <Typography variant="h3" fontWeight="bold">{activeCount}</Typography>
                         </CardContent>
                     </Card>
@@ -363,34 +376,62 @@ function UsersPage() {
 
             {/* Header */}
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-                <Typography variant="h4" fontWeight="bold">
+                <Typography variant="h4" fontWeight="700" sx={{ letterSpacing: '-0.02em' }}>
                     User Management
                 </Typography>
-                <Button 
-                    variant="contained" 
-                    startIcon={<PersonAddIcon />} 
-                    onClick={() => handleOpenDialog()}
-                    sx={{ py: 1, px: 3 }}
-                >
+                <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpenDialog()} sx={{ borderRadius: 2 }}>
                     Add New User
                 </Button>
             </Stack>
 
-            {/* Alerts */}
-            {error && (
-                <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
-                    {error}
-                </Alert>
-            )}
+            {/* Search and Filter Bar */}
+            <Paper sx={{ p: 2, mb: 3, borderRadius: 4 }}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
+                    <TextField
+                        size="small"
+                        placeholder="Search by name, email, or username..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        sx={{ flex: 2 }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    
+                    <FormControl size="small" sx={{ minWidth: 120 }}>
+                        <InputLabel>Role</InputLabel>
+                        <Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} label="Role">
+                            <MenuItem value="all">All Roles</MenuItem>
+                            <MenuItem value="admin">Admin</MenuItem>
+                            <MenuItem value="editor">Editor</MenuItem>
+                            <MenuItem value="viewer">Viewer</MenuItem>
+                        </Select>
+                    </FormControl>
 
-            {success && (
-                <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess('')}>
-                    {success}
-                </Alert>
-            )}
+                    <FormControl size="small" sx={{ minWidth: 120 }}>
+                        <InputLabel>Status</InputLabel>
+                        <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} label="Status">
+                            <MenuItem value="all">All Status</MenuItem>
+                            <MenuItem value="active">Active</MenuItem>
+                            <MenuItem value="inactive">Inactive</MenuItem>
+                        </Select>
+                    </FormControl>
 
-            {/* Data Table */}
-            <Paper sx={{ height: 500, width: '100%', overflow: 'hidden' }}>
+                    <Button variant="outlined" onClick={() => { setSearchTerm(''); setRoleFilter('all'); setStatusFilter('all'); }} sx={{ borderRadius: 2 }}>
+                        Clear Filters
+                    </Button>
+                </Stack>
+            </Paper>
+
+            {error && <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }} onClose={() => setError('')}>{error}</Alert>}
+            {success && <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }} onClose={() => setSuccess('')}>{success}</Alert>}
+
+            {/* Users Table */}
+            <Paper sx={{ p: 2, borderRadius: 4, overflow: 'hidden' }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}
@@ -399,101 +440,38 @@ function UsersPage() {
                     pageSizeOptions={[5, 10, 25, 50]}
                     initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
                     disableRowSelectionOnClick
-                    sx={{
-                        '& .MuiDataGrid-cell': {
-                            py: 1,
-                        },
-                    }}
+                    sx={{ border: 'none' }}
                 />
             </Paper>
 
             {/* Add/Edit User Dialog */}
             <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-                <DialogTitle sx={{ bgcolor: '#f5f5f5', py: 2 }}>
-                    <Typography variant="h6">
-                        {editingUser ? '✏️ Edit User' : '➕ Add New User'}
+                <DialogTitle sx={{ bgcolor: alpha('#e02424', 0.05), borderBottom: '1px solid #e5e7eb' }}>
+                    <Typography variant="h6" fontWeight="600">
+                        {editingUser ? 'Edit User' : 'Add New User'}
                     </Typography>
                 </DialogTitle>
                 <DialogContent sx={{ mt: 2 }}>
                     <Stack spacing={2.5}>
                         <Stack direction="row" spacing={2}>
-                            <TextField
-                                label="First Name"
-                                fullWidth
-                                value={formData.firstName}
-                                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                                required
-                            />
-                            <TextField
-                                label="Last Name"
-                                fullWidth
-                                value={formData.lastName}
-                                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                required
-                            />
+                            <TextField label="First Name" fullWidth name="firstName" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} required />
+                            <TextField label="Last Name" fullWidth name="lastName" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} required />
                         </Stack>
 
                         <Stack direction="row" spacing={2}>
-                            <TextField
-                                label="Age"
-                                type="number"
-                                fullWidth
-                                value={formData.age}
-                                onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                                required
-                            />
-                            <TextField
-                                label="Gender"
-                                select
-                                fullWidth
-                                value={formData.gender}
-                                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                                required
-                            >
-                                <MenuItem value="male">Male</MenuItem>
-                                <MenuItem value="female">Female</MenuItem>
+                            <TextField label="Age" type="number" fullWidth name="age" value={formData.age} onChange={(e) => setFormData({ ...formData, age: e.target.value })} required />
+                            <TextField label="Gender" select fullWidth name="gender" value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })} required>
+                                {genders.map((g) => <MenuItem key={g} value={g}>{g.charAt(0).toUpperCase() + g.slice(1)}</MenuItem>)}
                             </TextField>
                         </Stack>
 
-                        <TextField
-                            label="Contact Number"
-                            fullWidth
-                            value={formData.contactNumber}
-                            onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
-                            placeholder="09123456789"
-                            helperText="Must be exactly 11 digits"
-                            required
-                        />
-
-                        <TextField
-                            label="Email"
-                            type="email"
-                            fullWidth
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            required
-                        />
+                        <TextField label="Contact Number" fullWidth name="contactNumber" value={formData.contactNumber} onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })} placeholder="09123456789" helperText="Must be exactly 11 digits" required />
+                        <TextField label="Email" type="email" fullWidth name="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
 
                         <Stack direction="row" spacing={2}>
-                            <TextField
-                                label="Username"
-                                fullWidth
-                                value={formData.username}
-                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                helperText="No spaces allowed"
-                                required
-                            />
-                            <TextField
-                                label="Role"
-                                select
-                                fullWidth
-                                value={formData.type}
-                                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                required
-                            >
-                                <MenuItem value="admin">Admin</MenuItem>
-                                <MenuItem value="editor">Editor</MenuItem>
-                                <MenuItem value="viewer">Viewer</MenuItem>
+                            <TextField label="Username" fullWidth name="username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} helperText="No spaces allowed" required />
+                            <TextField label="Role" select fullWidth name="role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} required>
+                                {roles.map((r) => <MenuItem key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</MenuItem>)}
                             </TextField>
                         </Stack>
 
@@ -501,6 +479,7 @@ function UsersPage() {
                             label="Password"
                             type={showPassword ? 'text' : 'password'}
                             fullWidth
+                            name="password"
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             helperText={editingUser ? "Leave blank to keep current password" : "At least 8 characters"}
@@ -515,32 +494,12 @@ function UsersPage() {
                             }}
                         />
 
-                        <TextField
-                            label="Address"
-                            fullWidth
-                            multiline
-                            rows={2}
-                            value={formData.address}
-                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                            required
-                        />
-
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={formData.isActive}
-                                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                                />
-                            }
-                            label={formData.isActive ? '✅ User is Active' : '⛔ User is Inactive'}
-                        />
+                        <TextField label="Address" fullWidth multiline rows={2} name="address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required />
                     </Stack>
                 </DialogContent>
-                <DialogActions sx={{ p: 2.5, bgcolor: '#f5f5f5' }}>
+                <DialogActions sx={{ p: 2.5, borderTop: '1px solid #e5e7eb' }}>
                     <Button onClick={handleCloseDialog} variant="outlined">Cancel</Button>
-                    <Button onClick={handleSubmit} variant="contained" color="primary">
-                        {editingUser ? 'Update User' : 'Create User'}
-                    </Button>
+                    <Button onClick={handleSubmit} variant="contained">{editingUser ? 'Update User' : 'Create User'}</Button>
                 </DialogActions>
             </Dialog>
         </Box>
