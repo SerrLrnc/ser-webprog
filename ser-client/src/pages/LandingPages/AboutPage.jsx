@@ -2,101 +2,123 @@ import Button from "../../components/Button.jsx";
 
 const AboutPage = () => {
     return (
-        <div className="w-full bg-white">
-            {/* Hero Section */}
-            <section className="border-b border-gray-200 bg-gray-50 px-6 py-12 sm:px-8 lg:px-12">
-                <div className="mx-auto max-w-6xl">
-                    <div className="grid gap-8 md:grid-cols-2 md:items-center">
-                        <div className="rounded-2xl bg-red-600 p-8 text-center">
-                            <div className="text-7xl mb-2">👨‍💻</div>
-                            <p className="text-white font-semibold">Mobile & Web Developer</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-semibold uppercase text-red-600">About Me</p>
-                            <h1 className="text-3xl font-bold text-gray-900 mt-1">Mobile & Web Application Student</h1>
-                            <p className="mt-3 text-gray-600">
-                                Passionate about backend development and security. I have beginner to basic skills in 
-                                cybersecurity and MWA development.
-                            </p>
-                            <div className="mt-5 flex gap-3">
-                                <Button to="/" variant="primary">Back Home</Button>
-                                <Button to="/articles" variant="secondary">My Interests</Button>
+        <div className="flex w-full flex-col gap-6">
+            {/* Hero / Profile Header Section */}
+            <section className="border-y-2 border-gray-200 bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+                <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+                    <div className="rounded-3xl border-2 border-dashed border-red-300 bg-white p-6">
+                        <div className="flex min-h-72 items-center justify-center rounded-[1.25rem] bg-red-600">
+                            <div className="text-white text-center">
+                                <div className="text-6xl mb-2">👨‍💻</div>
+                                <p className="font-semibold">Mobile & Web Developer</p>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-
-            {/* Skills Section */}
-            <section className="border-b border-gray-200 bg-white px-6 py-12 sm:px-8 lg:px-12">
-                <div className="mx-auto max-w-6xl">
-                    <div className="text-center mb-8">
-                        <p className="text-sm font-semibold uppercase text-red-600">My Skills</p>
-                        <h2 className="text-2xl font-bold text-gray-900">What I Bring</h2>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                        {[
-                            { icon: "🔧", title: "Backend", desc: "Development" },
-                            { icon: "🔒", title: "Security", desc: "Cybersecurity" },
-                            { icon: "📱", title: "Mobile", desc: "App Dev" },
-                            { icon: "🌐", title: "Web", desc: "Application" }
-                        ].map((skill, i) => (
-                            <div key={i} className="text-center p-4 rounded-xl border border-gray-200 bg-white hover:shadow-md transition">
-                                <div className="text-3xl mb-1">{skill.icon}</div>
-                                <p className="font-bold text-gray-900 text-sm">{skill.title}</p>
-                                <p className="text-xs text-gray-500">{skill.desc}</p>
-                            </div>
-                        ))}
+                    <div>
+                        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-red-600">
+                            About Section
+                        </p>
+                        <h1 className="max-w-xl text-3xl font-bold leading-tight text-gray-900 sm:text-4xl">
+                            A profile wireframe focused on layout, spacing, and content grouping.
+                        </h1>
+                        <p className="mt-4 max-w-lg text-sm leading-7 text-gray-600 sm:text-base">
+                            This page follows the same low-fidelity system as the homepage with a simple hero,
+                            overview blocks, and supporting sections for profile details.
+                        </p>
+                        <div className="mt-6 flex flex-wrap gap-3">
+                            <Button href="/" variant="primary">
+                                Back Home
+                            </Button>
+                            <Button href="/articles" variant="secondary">
+                                Open Articles
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Journey Section */}
-            <section className="border-b border-gray-200 bg-gray-50 px-6 py-12 sm:px-8 lg:px-12">
-                <div className="mx-auto max-w-6xl">
-                    <div className="text-center mb-8">
-                        <p className="text-sm font-semibold uppercase text-red-600">My Journey</p>
-                        <h2 className="text-2xl font-bold text-gray-900">Story & Goals</h2>
+            {/* Quick Stats Section */}
+            <section className="border-y-2 border-gray-200 bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+                <div className="mb-6">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-red-600">
+                        Profile Overview
+                    </p>
+                    <h2 className="mt-2 text-2xl font-semibold text-gray-900">Quick summary blocks</h2>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="rounded-3xl border-2 border-gray-200 bg-white p-5 text-center">
+                        <p className="text-2xl font-bold text-gray-900">05</p>
+                        <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-red-600">
+                            Years
+                        </p>
                     </div>
-                    <div className="grid gap-6 md:grid-cols-3">
-                        {[
-                            { icon: "🎓", title: "Education", desc: "Studying MWA focusing on backend and security principles." },
-                            { icon: "💻", title: "Experience", desc: "Backend systems, databases, and security implementation." },
-                            { icon: "🎯", title: "Goals", desc: "Full-stack developer with cybersecurity expertise." }
-                        ].map((item, i) => (
-                            <div key={i} className="bg-white rounded-xl border border-gray-200 p-6 text-center hover:shadow-md transition">
-                                <div className="text-4xl mb-2">{item.icon}</div>
-                                <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                                <p className="text-sm text-gray-600 mt-2">{item.desc}</p>
-                            </div>
-                        ))}
+                    <div className="rounded-3xl border-2 border-gray-200 bg-white p-5 text-center">
+                        <p className="text-2xl font-bold text-gray-900">16</p>
+                        <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-red-600">
+                            Projects
+                        </p>
+                    </div>
+                    <div className="rounded-3xl border-2 border-gray-200 bg-white p-5 text-center">
+                        <p className="text-2xl font-bold text-gray-900">09</p>
+                        <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-red-600">
+                            Clients
+                        </p>
+                    </div>
+                    <div className="rounded-3xl border-2 border-gray-200 bg-white p-5 text-center">
+                        <p className="text-2xl font-bold text-gray-900">03</p>
+                        <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-red-600">
+                            Focus Areas
+                        </p>
                     </div>
                 </div>
             </section>
 
-            {/* Gallery Section */}
-            <section className="bg-white px-6 py-12 sm:px-8 lg:px-12">
-                <div className="mx-auto max-w-6xl">
-                    <div className="text-center mb-8">
-                        <p className="text-sm font-semibold uppercase text-red-600">Gallery</p>
-                        <h2 className="text-2xl font-bold text-gray-900">Visual Journey</h2>
+            {/* Stacked Content + Visual Grid Section */}
+            <section className="border-y-2 border-gray-200 bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+                <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+                    <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-red-600">
+                            Section Flow
+                        </p>
+                        <h2 className="mt-2 text-2xl font-semibold text-gray-900">Stacked content wireframe</h2>
+
+                        <div className="mt-6 space-y-4">
+                            <article className="rounded-3xl border-2 border-gray-200 bg-white p-5">
+                                <h3 className="text-lg font-semibold text-gray-900">Intro Block</h3>
+                                <p className="mt-3 text-sm leading-6 text-gray-600">
+                                    A simple opening area for biography, role, or supporting information.
+                                </p>
+                            </article>
+                            <article className="rounded-3xl border-2 border-gray-200 bg-white p-5">
+                                <h3 className="text-lg font-semibold text-gray-900">Experience Block</h3>
+                                <p className="mt-3 text-sm leading-6 text-gray-600">
+                                    Repeated section styling keeps the page readable and easy to extend.
+                                </p>
+                            </article>
+                            <article className="rounded-3xl border-2 border-gray-200 bg-white p-5">
+                                <h3 className="text-lg font-semibold text-gray-900">Details Block</h3>
+                                <p className="mt-3 text-sm leading-6 text-gray-600">
+                                    Another placeholder area for skills, notes, or references.
+                                </p>
+                            </article>
+                        </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
-                        {[
-                            "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=150&h=150&fit=crop",
-                            "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=150&h=150&fit=crop",
-                            "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=150&h=150&fit=crop",
-                            "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=150&h=150&fit=crop",
-                            "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=150&h=150&fit=crop",
-                            "https://images.unsplash.com/photo-1551033406-611cf9a28f67?w=150&h=150&fit=crop"
-                        ].map((img, i) => (
-                            <div key={i} className="aspect-square rounded-lg overflow-hidden border border-gray-200">
-                                <img src={img} alt={`Gallery ${i+1}`} className="w-full h-full object-cover hover:scale-105 transition duration-300" />
-                            </div>
-                        ))}
-                    </div>
-                    <div className="text-center mt-8">
-                        <Button variant="primary">View Portfolio →</Button>
+
+                    <div className="rounded-3xl border-2 border-gray-200 bg-white p-5">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-red-600">
+                            Visual Grid
+                        </p>
+                        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                            {[1,2,3,4,5].map((i) => (
+                                <div key={i} className="flex aspect-square items-center justify-center rounded-[1.25rem] bg-gray-100">
+                                    <div className="h-12 w-12 border-2 border-gray-300 bg-gray-200" />
+                                </div>
+                            ))}
+                        </div>
+                        <Button className="mt-5" variant="secondary">
+                            View Section
+                        </Button>
                     </div>
                 </div>
             </section>
