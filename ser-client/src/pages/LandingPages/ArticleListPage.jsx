@@ -43,45 +43,33 @@ const articles = [
 
 function ArticleListPage() {
     return (
-        <div className="flex w-full flex-col gap-6">
+        <div className="w-full bg-white">
             {/* Hero Section */}
-            <section className="border-y-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-                <div className="mx-auto max-w-5xl">
-                    <div className="mb-8">
-                        <Button to="/" variant="secondary">
-                            ← Back Home
-                        </Button>
-                    </div>
-                    <div className="text-left">
-                        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-maroon-600">
-                            My Interests
-                        </p>
-                        <h1 className="text-3xl font-bold leading-tight text-gray-900 sm:text-4xl lg:text-5xl max-w-3xl">
-                            Things I'm Passionate About
-                        </h1>
-                        <p className="mt-4 text-base leading-7 text-gray-600 sm:text-lg max-w-2xl">
-                            A collection of my personal interests and hobbies that shape who I am today.
-                        </p>
+            <section className="border-b border-gray-200 bg-gray-50 px-6 py-12 sm:px-8 lg:px-12">
+                <div className="mx-auto max-w-6xl">
+                    <Button to="/" variant="secondary" className="mb-6">← Back Home</Button>
+                    <div className="text-left max-w-2xl">
+                        <p className="text-sm font-semibold uppercase text-red-600">My Interests</p>
+                        <h1 className="text-3xl font-bold text-gray-900 mt-1">Things I'm Passionate About</h1>
+                        <p className="mt-2 text-gray-600">A collection of my personal interests and hobbies that shape who I am today.</p>
                     </div>
                 </div>
             </section>
 
             {/* Article Grid Section */}
-            <section className="border-y-2 border-gray-200 bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+            <section className="bg-white px-6 py-12 sm:px-8 lg:px-12">
                 <div className="mx-auto max-w-7xl">
                     <div className="mb-8 text-left">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-maroon-600">
-                            Featured Interests
-                        </p>
-                        <h2 className="mt-2 text-2xl font-semibold text-gray-900">What Drives Me</h2>
-                        <p className="mt-1 text-sm text-gray-500">Click any card to read the full article</p>
+                        <p className="text-sm font-semibold uppercase text-red-600">Featured Interests</p>
+                        <h2 className="text-2xl font-bold text-gray-900">What Drives Me</h2>
+                        <p className="text-sm text-gray-500 mt-1">Click any card to read the full article</p>
                     </div>
 
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                         {articles.map((article) => (
-                            <article key={article.id} className="group rounded-2xl border-2 border-gray-200 bg-white p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col h-full">
-                                {/* Real Image Section */}
-                                <div className="mb-4 flex aspect-video items-center justify-center rounded-xl overflow-hidden bg-gradient-to-br from-maroon-100 to-maroon-200">
+                            <article key={article.id} className="group rounded-xl border border-gray-200 bg-white p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col h-full">
+                                {/* Image Section */}
+                                <div className="mb-4 flex aspect-video items-center justify-center rounded-lg overflow-hidden bg-gray-100">
                                     <img 
                                         src={article.image} 
                                         alt={article.title}
@@ -91,13 +79,13 @@ function ArticleListPage() {
                                 
                                 {/* Category */}
                                 <div className="mt-2">
-                                    <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-maroon-600">
+                                    <span className="text-xs font-semibold uppercase text-red-600">
                                         {article.category}
                                     </span>
                                 </div>
                                 
                                 {/* Title */}
-                                <h3 className="mt-2 text-lg font-semibold text-gray-900 line-clamp-2 min-h-[3.5rem]">
+                                <h3 className="mt-2 text-lg font-semibold text-gray-900 line-clamp-2">
                                     {article.title}
                                 </h3>
                                 
@@ -107,7 +95,7 @@ function ArticleListPage() {
                                 </p>
                                 
                                 {/* Preview */}
-                                <p className="mt-3 text-sm leading-6 text-gray-600 line-clamp-3 min-h-[4.5rem]">
+                                <p className="mt-3 text-sm leading-6 text-gray-600 line-clamp-3">
                                     {article.preview}
                                 </p>
                                 
@@ -126,6 +114,6 @@ function ArticleListPage() {
             </section>
         </div>
     );
-};
+}
 
 export default ArticleListPage;
