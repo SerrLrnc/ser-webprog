@@ -32,7 +32,7 @@ const HomePage = () => {
                             <div className="absolute inset-0 bg-red-600/20 rounded-3xl blur-3xl"></div>
                             <div className="relative rounded-3xl border-2 border-gray-200 bg-white p-6 shadow-xl overflow-hidden">
                                 <img 
-                                    src={yoyet.jpg} 
+                                    src={yoyetImg} 
                                     alt="Yoyetz"
                                     className="w-full h-full object-cover rounded-2xl"
                                 />
