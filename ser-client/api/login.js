@@ -14,12 +14,10 @@ export default async function handler(req, res) {
 
     const { email, password } = req.body;
 
-    // Demo users (you can add more)
+    // Demo users
     const validUsers = {
         'admin@lab.dev': { password: 'admin123', type: 'admin', firstName: 'Admin' },
-        'james.wilson@ser.dev': { password: 'James123!', type: 'admin', firstName: 'James' },
-        'editor@lab.dev': { password: 'editor123', type: 'editor', firstName: 'Editor' },
-        'viewer@lab.dev': { password: 'viewer123', type: 'viewer', firstName: 'Viewer' }
+        'james.wilson@ser.dev': { password: 'James123!', type: 'admin', firstName: 'James' }
     };
 
     const user = validUsers[email];
