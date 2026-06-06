@@ -1,5 +1,14 @@
 {
-  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/ser-server/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/ser-client/$1"
+    }
+  ],
   "builds": [
     {
       "src": "ser-client/**",
@@ -11,16 +20,6 @@
     {
       "src": "ser-server/index.js",
       "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/ser-server/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/ser-client/dist/$1"
     }
   ]
 }
