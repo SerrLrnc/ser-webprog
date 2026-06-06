@@ -1,4 +1,5 @@
 import Button from "../../components/Button.jsx";
+import yoyetImg from "../../assets/images/yoyet.jpg";
 
 const AboutPage = () => {
     return (
@@ -6,118 +7,136 @@ const AboutPage = () => {
             {/* Hero / Profile Header Section */}
             <section className="border-y-2 border-gray-200 bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
                 <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-                    <div className="rounded-3xl border-2 border-dashed border-red-300 bg-white p-6">
-                        <div className="flex min-h-72 items-center justify-center rounded-[1.25rem] bg-red-600">
-                            <div className="text-white text-center">
-                                <div className="text-6xl mb-2">👨‍💻</div>
-                                <p className="font-semibold">Mobile & Web Developer</p>
-                            </div>
-                        </div>
+                    <div className="rounded-3xl border-2 border-dashed border-red-300 bg-white p-6 overflow-hidden">
+                        <img 
+                            src={yoyetImg} 
+                            alt="Yoyetz"
+                            className="w-full h-full object-cover rounded-2xl"
+                        />
                     </div>
                     <div>
                         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-red-600">
-                            About Section
+                            About Me
                         </p>
                         <h1 className="max-w-xl text-3xl font-bold leading-tight text-gray-900 sm:text-4xl">
-                            A profile wireframe focused on layout, spacing, and content grouping.
+                            Mobile & Web Application Student
                         </h1>
                         <p className="mt-4 max-w-lg text-sm leading-7 text-gray-600 sm:text-base">
-                            This page follows the same low-fidelity system as the homepage with a simple hero,
-                            overview blocks, and supporting sections for profile details.
+                            I am a passionate Mobile & Web Application student specializing in 
+                            backend development and security. I have beginner to basic skills in 
+                            cybersecurity and MWA (Mobile & Web Application) development.
                         </p>
                         <div className="mt-6 flex flex-wrap gap-3">
-                            <Button href="/" variant="primary">
+                            <Button to="/" variant="primary">
                                 Back Home
                             </Button>
-                            <Button href="/articles" variant="secondary">
-                                Open Articles
+                            <Button to="/articles" variant="secondary">
+                                My Interests
                             </Button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Quick Stats Section */}
+            {/* My Skills Section */}
             <section className="border-y-2 border-gray-200 bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
                 <div className="mb-6">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-red-600">
-                        Profile Overview
+                        My Skills
                     </p>
-                    <h2 className="mt-2 text-2xl font-semibold text-gray-900">Quick summary blocks</h2>
+                    <h2 className="mt-2 text-2xl font-semibold text-gray-900">What I Bring to the Table</h2>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div className="rounded-3xl border-2 border-gray-200 bg-white p-5 text-center">
-                        <p className="text-2xl font-bold text-gray-900">05</p>
+                    <div className="rounded-3xl border-2 border-red-500 bg-white p-5 text-center transition-all hover:shadow-lg hover:-translate-y-1">
+                        <div className="text-4xl mb-3">🔧</div>
+                        <p className="text-2xl font-bold text-gray-900">Backend</p>
                         <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-red-600">
-                            Years
+                            Development
                         </p>
                     </div>
-                    <div className="rounded-3xl border-2 border-gray-200 bg-white p-5 text-center">
-                        <p className="text-2xl font-bold text-gray-900">16</p>
+                    <div className="rounded-3xl border-2 border-red-500 bg-white p-5 text-center transition-all hover:shadow-lg hover:-translate-y-1">
+                        <div className="text-4xl mb-3">🔒</div>
+                        <p className="text-2xl font-bold text-gray-900">Security</p>
                         <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-red-600">
-                            Projects
+                            Cybersecurity
                         </p>
                     </div>
-                    <div className="rounded-3xl border-2 border-gray-200 bg-white p-5 text-center">
-                        <p className="text-2xl font-bold text-gray-900">09</p>
+                    <div className="rounded-3xl border-2 border-red-500 bg-white p-5 text-center transition-all hover:shadow-lg hover:-translate-y-1">
+                        <div className="text-4xl mb-3">📱</div>
+                        <p className="text-2xl font-bold text-gray-900">Mobile</p>
                         <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-red-600">
-                            Clients
+                            App Dev
                         </p>
                     </div>
-                    <div className="rounded-3xl border-2 border-gray-200 bg-white p-5 text-center">
-                        <p className="text-2xl font-bold text-gray-900">03</p>
+                    <div className="rounded-3xl border-2 border-red-500 bg-white p-5 text-center transition-all hover:shadow-lg hover:-translate-y-1">
+                        <div className="text-4xl mb-3">🌐</div>
+                        <p className="text-2xl font-bold text-gray-900">Web</p>
                         <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-red-600">
-                            Focus Areas
+                            Application
                         </p>
                     </div>
                 </div>
             </section>
 
-            {/* Stacked Content + Visual Grid Section */}
+            {/* My Journey Section */}
             <section className="border-y-2 border-gray-200 bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
                 <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
                     <div>
                         <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-red-600">
-                            Section Flow
+                            My Journey
                         </p>
-                        <h2 className="mt-2 text-2xl font-semibold text-gray-900">Stacked content wireframe</h2>
+                        <h2 className="mt-2 text-2xl font-semibold text-gray-900">My Story & Goals</h2>
 
                         <div className="mt-6 space-y-4">
-                            <article className="rounded-3xl border-2 border-gray-200 bg-white p-5">
-                                <h3 className="text-lg font-semibold text-gray-900">Intro Block</h3>
+                            <article className="rounded-3xl border-2 border-red-500 bg-white p-5 shadow-md transition-all hover:shadow-lg">
+                                <h3 className="text-lg font-semibold text-gray-900">🎓 Education</h3>
                                 <p className="mt-3 text-sm leading-6 text-gray-600">
-                                    A simple opening area for biography, role, or supporting information.
+                                    Currently studying Mobile and Web Application Development, with a strong focus on backend technologies and security principles. 
+                                    Through my studies, I am gaining knowledge in server-side development, application architecture, and cybersecurity practices 
+                                    that are essential for building modern and secure digital solutions.
                                 </p>
                             </article>
-                            <article className="rounded-3xl border-2 border-gray-200 bg-white p-5">
-                                <h3 className="text-lg font-semibold text-gray-900">Experience Block</h3>
+                            <article className="rounded-3xl border-2 border-red-500 bg-white p-5 shadow-md transition-all hover:shadow-lg">
+                                <h3 className="text-lg font-semibold text-gray-900">💻 Experience</h3>
                                 <p className="mt-3 text-sm leading-6 text-gray-600">
-                                    Repeated section styling keeps the page readable and easy to extend.
+                                    working on backend systems, database management, and the implementation of security measures for web applications. This involves 
+                                    designing and maintaining databases, developing server-side functionalities, and applying security best practices to protect applications
+                                    and user data from potential threats.
                                 </p>
                             </article>
-                            <article className="rounded-3xl border-2 border-gray-200 bg-white p-5">
-                                <h3 className="text-lg font-semibold text-gray-900">Details Block</h3>
+                            <article className="rounded-3xl border-2 border-red-500 bg-white p-5 shadow-md transition-all hover:shadow-lg">
+                                <h3 className="text-lg font-semibold text-gray-900">🎯 Goals</h3>
                                 <p className="mt-3 text-sm leading-6 text-gray-600">
-                                    Another placeholder area for skills, notes, or references.
+                                    working on backend systems, database management, and the implementation of security measures for web applications. This involves designing and
+                                     maintaining databases, developing server-side functionalities, and applying security best practices to protect applications and user data from 
+                                     potential threats.
                                 </p>
                             </article>
                         </div>
                     </div>
 
-                    <div className="rounded-3xl border-2 border-gray-200 bg-white p-5">
+                    {/* Visual Gallery */}
+                    <div className="rounded-3xl border-2 border-red-500 bg-white p-5 shadow-lg">
                         <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-red-600">
-                            Visual Grid
+                            Visual Gallery
                         </p>
                         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                            {[1,2,3,4,5].map((i) => (
-                                <div key={i} className="flex aspect-square items-center justify-center rounded-[1.25rem] bg-gray-100">
-                                    <div className="h-12 w-12 border-2 border-gray-300 bg-gray-200" />
+                            {[
+                                "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=200&h=200&fit=crop",
+                                "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=200&h=200&fit=crop",
+                                "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=200&h=200&fit=crop",
+                                "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=200&h=200&fit=crop",
+                                "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=200&h=200&fit=crop",
+                                "https://images.unsplash.com/photo-1551033406-611cf9a28f67?w=200&h=200&fit=crop"
+                            ].map((img, i) => (
+                                <div key={i} className="flex aspect-square items-center justify-center rounded-[1.25rem] overflow-hidden bg-gradient-to-br from-red-100 to-red-200">
+                                    <img src={img} alt={`Gallery ${i+1}`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
                                 </div>
                             ))}
                         </div>
-                        <Button className="mt-5" variant="secondary">
-                            View Section
+                        <Button className="mt-5 w-full" variant="primary">
+                            View Portfolio →
                         </Button>
                     </div>
                 </div>
