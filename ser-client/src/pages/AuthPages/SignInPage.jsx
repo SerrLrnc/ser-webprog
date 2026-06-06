@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import constants from '../../constants';
 
 function SignInPage() {
     const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ function SignInPage() {
         setError('');
 
         try {
-            const response = await fetch('/api/users/login', {
+             const response = await fetch(`${constants.API_URL}/users/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),

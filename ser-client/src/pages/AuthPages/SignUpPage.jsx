@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import constants from '../../constants';
+
 
 function SignUpPage() {
     const navigate = useNavigate();
@@ -37,7 +39,7 @@ function SignUpPage() {
         }
 
         try {
-            const response = await fetch('/api/users', {
+            const response = await fetch(`${constants.API_URL}/users`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

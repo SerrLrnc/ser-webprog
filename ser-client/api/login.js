@@ -1,13 +1,11 @@
 export default async function handler(req, res) {
     // Enable CORS
-    res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
+        return res.status(200).end();
     }
 
     if (req.method !== 'POST') {
@@ -16,13 +14,15 @@ export default async function handler(req, res) {
 
     const { email, password } = req.body;
 
-    // Demo users for testing
-    const users = {
+    // Demo users (you can add more)
+    const validUsers = {
         'admin@lab.dev': { password: 'admin123', type: 'admin', firstName: 'Admin' },
-        'james.wilson@ser.dev': { password: 'James123!', type: 'admin', firstName: 'James' }
+        'james.wilson@ser.dev': { password: 'James123!', type: 'admin', firstName: 'James' },
+        'editor@lab.dev': { password: 'editor123', type: 'editor', firstName: 'Editor' },
+        'viewer@lab.dev': { password: 'viewer123', type: 'viewer', firstName: 'Viewer' }
     };
 
-    const user = users[email];
+    const user = validUsers[email];
 
     if (!user || user.password !== password) {
         return res.status(401).json({ message: 'Invalid credentials' });
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
         message: 'Login successful',
-        token: 'mock-jwt-token-' + Date.now(),
+        token: 'mock-token-' + Date.now(),
         type: user.type,
         firstName: user.firstName
     });

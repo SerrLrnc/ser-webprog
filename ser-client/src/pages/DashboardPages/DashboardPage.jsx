@@ -62,10 +62,10 @@ function DashboardPage() {
 
     const fetchStats = async () => {
         try {
-            const usersRes = await fetch(`${constants.HOST}/users`);
+            const usersRes = await fetch(`${constants.API_URL}/users`);
             const users = await usersRes.json();
             
-            const articlesRes = await fetch(`${constants.HOST}/articles`);
+            const articlesRes = await fetch(`${constants.API_URL}/articles`);
             const articles = await articlesRes.json();
             
             setStats({

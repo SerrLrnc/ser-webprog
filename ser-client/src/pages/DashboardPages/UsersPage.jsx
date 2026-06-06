@@ -76,17 +76,14 @@ function UsersPage() {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch(`${constants.HOST}/users`);
+            const response = await fetch(`${constants.API_URL}/users`);
             const data = await response.json();
             setUsers(data);
-            setLoading(false);
         } catch (err) {
             console.error('Error fetching users:', err);
-            setError('Failed to load users');
-            setLoading(false);
         }
     };
-
+    
     const filteredUsers = useMemo(() => {
         let filtered = [...users];
         
