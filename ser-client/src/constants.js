@@ -1,4 +1,4 @@
-const HOST = import.meta.env.VITE_API_URL || '/api';
+const HOST = '/api';
 
 export default {
     HOST,
